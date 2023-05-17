@@ -3,6 +3,9 @@ name: OpenWrt Build
 on:
   push:
 
+env:
+  PACKAGE_NAME: luci-app-v2ray
+
 jobs:
   build:
     name: ${{ matrix.arch }} build
