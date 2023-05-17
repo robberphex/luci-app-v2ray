@@ -1,0 +1,56 @@
+name: OpenWrt Build
+
+on:
+  push:
+
+jobs:
+  build:
+    name: ${{ matrix.arch }} build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          # - x86_64
+          - arm_cortex-a7
+          - arm_cortex-a9
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - name: Setup Node.js Cache
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: node-${{ env.PACKAGE_NAME }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-${{ env.PACKAGE_NAME }}-
+
+      - name: Test Source
+        run: |
+          yarn install
+          yarn lint
+
+      - name: Build Package Source
+        run: |
+          yarn install
+          yarn package
+
+      - name: Build
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-snapshot
+          FEED_DIR: ${{ github.workspace }}
+          PACKAGES: v2ray-core
+
+      - name: Store packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.arch}}-packages
+          path: bin/packages/${{ matrix.arch }}/packages/*.ipk
