@@ -15,9 +15,11 @@ jobs:
         arch:
           # - x86_64
           - arm_cortex-a7
+          - arm_cortex-a15_neon-vfpv4
           # - arm_cortex-a9
         branch:
           - openwrt-21.02
+          - openwrt-22.03
 
     steps:
       - name: Checkout
