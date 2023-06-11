@@ -8,18 +8,16 @@ env:
 
 jobs:
   build:
-    name: ${{ matrix.arch }}-${{ matrix.branch }} build
+    name: luci-app-v2ray all build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch:
-          # - x86_64
-          - arm_cortex-a7
-          - arm_cortex-a15_neon-vfpv4
-          # - arm_cortex-a9
         branch:
           - openwrt-21.02
-          - openwrt-22.03
+          # - openwrt-22.03
+        arch:
+          - arm_cortex-a7
+          # - arm_cortex-a9
 
     steps:
       - name: Checkout
@@ -27,6 +25,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 2
+          path: luci-app-v2ray
 
       - name: Build
         uses: openwrt/gh-action-sdk@main
@@ -38,5 +37,5 @@ jobs:
       - name: Store packages
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.arch }}-${{ matrix.branch }}-packages
-          path: bin/packages/${{ matrix.arch }}/packages/*.ipk
+          name: luci-app-v2ray-all-packages
+          path: bin/packages/${{ matrix.arch }}/action/*.ipk
